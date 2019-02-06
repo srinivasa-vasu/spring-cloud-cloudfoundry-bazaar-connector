@@ -1,0 +1,2 @@
+org.springframework.cloud.bazaar.connector.MysqlServiceInfoCreator
+org.springframework.cloud.bazaar.connector.PostgresqlServiceInfoCreator
