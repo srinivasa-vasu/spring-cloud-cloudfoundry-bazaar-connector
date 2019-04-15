@@ -5,35 +5,27 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.cloud.cloudfoundry.Tags;
-import org.springframework.cloud.service.common.RelationalServiceInfo;
+import org.springframework.cloud.service.common.MongoServiceInfo;
 import org.springframework.cloud.util.UriInfo;
 
-public abstract class RelationalServiceInfoCreator<SI extends RelationalServiceInfo>
-		extends BazaarServiceInfoCreator<SI> {
+public class MongoServiceInfoCreator extends BazaarServiceInfoCreator<MongoServiceInfo> {
 
-	private String username;
-	private String database;
-
-	RelationalServiceInfoCreator(Tags tags, String... uriSchemes) {
-		super(tags, uriSchemes);
+	public MongoServiceInfoCreator() {
+		super(new Tags("mongo-od", "mongo-ds", "mongo-odc"),
+				MongoServiceInfo.MONGODB_SCHEME);
 	}
-
-	@Override
-	public boolean accept(Map<String, Object> serviceData) {
-		return super.accept(serviceData);
-	}
-
-	public abstract SI createServiceInfo(String id, String uri, String jdbcUrl);
 
 	@SuppressWarnings("unchecked")
-	public SI createServiceInfo(Map<String, Object> serviceData) {
-		String uri = null;
+	public MongoServiceInfo createServiceInfo(Map<String, Object> serviceData) {
+
 		int port = 0;
 		String password = null;
 		String host = null;
+		String username = null;
+		String database = null;
+		String uri = null;
 
 		Map<String, Object> credentials = getCredentials(serviceData);
-
 		if (credentials != null && !credentials.isEmpty()) {
 
 			Map<String, Object> secretInfo = (Map<String, Object>) getListFromCredentials(
@@ -44,30 +36,27 @@ public abstract class RelationalServiceInfoCreator<SI extends RelationalServiceI
 			if (!secretInfo.isEmpty()) {
 				password = matchEndsWithCredentials(secretInfo, "root-password",
 						"password");
+				username = matchEndsWithCredentials(secretInfo, "user", "username");
+				database = matchEndsWithCredentials(secretInfo, "database", "db",
+						"adminDatabase");
 			}
 
 			List<Map<String, Object>> services = getListFromCredentials(credentials,
 					"services");
 
 			if (services != null && !services.isEmpty()) {
-
-				port = parsePort(services, "", "port", "nodePort");
-				host = parseHost(services, "", "ip", "clusterIP");
-
+				port = parsePort(services, "client", "port", "nodePort", "targetPort");
+				host = parseHost(services, "client", "ip", "clusterIP");
 			}
 
 			uri = new UriInfo(getDefaultUriScheme(), host, port, username, password,
 					database).toString();
 		}
 
-		return createServiceInfo(getId(serviceData), uri, null);
+		return createServiceInfo(getId(serviceData), uri);
 	}
 
-	void setUsername(String username) {
-		this.username = username;
-	}
-
-	void setDatabase(String database) {
-		this.database = database;
+	public MongoServiceInfo createServiceInfo(String id, String uri) {
+		return new MongoServiceInfo(id, uri);
 	}
 }

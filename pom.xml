@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.springframework.cloud.bazaar.connector</groupId>
 	<artifactId>spring-cloud-cloudfoundry-bazaar-connector</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>Bazaar.RC1</version>
 	<name>spring-cloud-cloudfoundry-bazaar-connector</name>
 	<description>Demo project for Spring Boot</description>
 
