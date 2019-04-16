@@ -11,7 +11,7 @@ import org.springframework.cloud.util.UriInfo;
 public class MongoServiceInfoCreator extends BazaarServiceInfoCreator<MongoServiceInfo> {
 
 	public MongoServiceInfoCreator() {
-		super(new Tags("mongo-od", "mongo-ds", "mongo-odc"),
+		super(new Tags("od-mongo", "ds-mongo", "k8s-mongo"),
 				MongoServiceInfo.MONGODB_SCHEME);
 	}
 
@@ -46,7 +46,7 @@ public class MongoServiceInfoCreator extends BazaarServiceInfoCreator<MongoServi
 
 			if (services != null && !services.isEmpty()) {
 				port = parsePort(services, "client", "port", "nodePort", "targetPort");
-				host = parseHost(services, "client", "ip", "clusterIP");
+				host = parseHost(services, "client", "ip");
 			}
 
 			uri = new UriInfo(getDefaultUriScheme(), host, port, username, password,

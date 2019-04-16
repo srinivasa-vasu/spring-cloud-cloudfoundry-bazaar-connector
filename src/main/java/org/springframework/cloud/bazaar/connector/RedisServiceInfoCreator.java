@@ -6,19 +6,17 @@ import java.util.Map;
 
 import org.springframework.cloud.cloudfoundry.Tags;
 import org.springframework.cloud.service.common.RedisServiceInfo;
-import org.springframework.cloud.util.UriInfo;
 
 public class RedisServiceInfoCreator extends BazaarServiceInfoCreator<RedisServiceInfo> {
 
 	public RedisServiceInfoCreator() {
-		super(new Tags("redis-od", "redis-ds", "redis-odc"),
-				RedisServiceInfo.REDIS_SCHEME, RedisServiceInfo.REDISS_SCHEME);
+		super(new Tags("od-redis", "ds-redis", "k8s-redis"),
+				RedisServiceInfo.REDIS_SCHEME);
 	}
 
 	@SuppressWarnings("unchecked")
 	public RedisServiceInfo createServiceInfo(Map<String, Object> serviceData) {
 
-		String uri = null;
 		int port = 0;
 		String password = null;
 		String host = null;
@@ -42,17 +40,15 @@ public class RedisServiceInfoCreator extends BazaarServiceInfoCreator<RedisServi
 
 			if (services != null && !services.isEmpty()) {
 				port = parsePort(services, "", "port", "nodePort", "targetPort");
-				host = parseHost(services, "", "ip", "clusterIP");
+				host = parseHost(services, "", "ip");
 			}
 
-			uri = new UriInfo(getDefaultUriScheme(), host, port, null, password, null)
-					.toString();
 		}
 
-		return createServiceInfo(getId(serviceData), uri);
+		return createServiceInfo(getId(serviceData), host, port, password);
 	}
 
-	public RedisServiceInfo createServiceInfo(String id, String uri) {
-		return new RedisServiceInfo(id, uri);
+	public RedisServiceInfo createServiceInfo(String id, String host, int port, String password) {
+		return new RedisServiceInfo(id, host, port, password);
 	}
 }

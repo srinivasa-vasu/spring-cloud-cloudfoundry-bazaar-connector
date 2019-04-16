@@ -64,21 +64,18 @@ public abstract class BazaarServiceInfoCreator<SI extends ServiceInfo>
 
 	@SuppressWarnings("unchecked")
 	protected String parseHost(List<Map<String, Object>> serviceInfo, String filter,
-			String... portMatch) {
+			String hostMatch) {
 		String host = null;
 		Map<String, Object> hostInfo = (Map<String, Object>) ((Map<String, Object>) serviceInfo
-				.stream().findFirst().orElse(Collections.emptyMap())
+				.stream().filter(obj -> ((String) obj.get("name")).endsWith(filter))
+				.findFirst().orElse(Collections.emptyMap())
 				.getOrDefault("status", Collections.emptyMap()))
 						.getOrDefault("loadBalancer", Collections.emptyMap());
 
 		if (!hostInfo.isEmpty()) {
 			host = (String) ((List<Map<String, Object>>) hostInfo.get("ingress")).stream()
 					.findFirst().orElse(Collections.emptyMap())
-					.getOrDefault("ip", ((Map<String, Object>) serviceInfo.stream()
-							.filter(obj -> ((String) obj.get("name")).endsWith(filter))
-							.findFirst().orElse(Collections.emptyMap())
-							.getOrDefault("spec", Collections.emptyMap()))
-									.get("clusterIP"));
+					.get(hostMatch);
 		}
 		return host;
 	}

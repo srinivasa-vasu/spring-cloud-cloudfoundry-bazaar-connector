@@ -52,7 +52,7 @@ public abstract class RelationalServiceInfoCreator<SI extends RelationalServiceI
 			if (services != null && !services.isEmpty()) {
 
 				port = parsePort(services, "", "port", "nodePort");
-				host = parseHost(services, "", "ip", "clusterIP");
+				host = parseHost(services, "", "ip");
 
 			}
 
