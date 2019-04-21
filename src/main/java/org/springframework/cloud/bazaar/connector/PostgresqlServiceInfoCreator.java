@@ -10,7 +10,7 @@ public class PostgresqlServiceInfoCreator
 		extends RelationalServiceInfoCreator<PostgresqlServiceInfo> {
 
 	public PostgresqlServiceInfoCreator() {
-		super(new Tags("postgresql"), POSTGRES_JDBC_SCHEME, POSTGRES_SCHEME);
+		super(new Tags("od-postgresql", "od-postgres", "ds-postgres", "ds-postgresql"), POSTGRES_JDBC_SCHEME, POSTGRES_SCHEME);
 		// TODO - Bazaar doesn't return these values. To be removed
 		setUsername("postgres");
 		setDatabase("my_db");

@@ -7,7 +7,7 @@ public class MysqlServiceInfoCreator
 		extends RelationalServiceInfoCreator<MysqlServiceInfo> {
 
 	public MysqlServiceInfoCreator() {
-		super(new Tags("mysql"), MysqlServiceInfo.MYSQL_SCHEME);
+		super(new Tags("od-mysql", "ds-mysql"), MysqlServiceInfo.MYSQL_SCHEME);
 		// TODO - Bazaar doesn't return these values. To be removed
 		setUsername("root");
 		setDatabase("my_db");

@@ -4,11 +4,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.cloudfoundry.Tags;
 import org.springframework.cloud.service.common.MongoServiceInfo;
 import org.springframework.cloud.util.UriInfo;
 
 public class MongoServiceInfoCreator extends BazaarServiceInfoCreator<MongoServiceInfo> {
+
+	@Value("${SPRING_DATA_MONGODB_DATABASE}")
+	private String dbProp;
 
 	public MongoServiceInfoCreator() {
 		super(new Tags("od-mongo", "ds-mongo", "k8s-mongo"),
@@ -22,7 +26,7 @@ public class MongoServiceInfoCreator extends BazaarServiceInfoCreator<MongoServi
 		String password = null;
 		String host = null;
 		String username = null;
-		String database = null;
+		String database = dbProp;
 		String uri = null;
 
 		Map<String, Object> credentials = getCredentials(serviceData);
@@ -37,8 +41,13 @@ public class MongoServiceInfoCreator extends BazaarServiceInfoCreator<MongoServi
 				password = matchEndsWithCredentials(secretInfo, "root-password",
 						"password");
 				username = matchEndsWithCredentials(secretInfo, "user", "username");
-				database = matchEndsWithCredentials(secretInfo, "database", "db",
-						"adminDatabase");
+				if ((database == null || database.isEmpty())
+						&& (database = System
+								.getenv("SPRING_DATA_MONGODB_DATABASE")) == null
+						|| database.isEmpty()) {
+					database = matchEndsWithCredentials(secretInfo, "database", "db",
+							"adminDatabase");
+				}
 			}
 
 			List<Map<String, Object>> services = getListFromCredentials(credentials,
@@ -50,7 +59,7 @@ public class MongoServiceInfoCreator extends BazaarServiceInfoCreator<MongoServi
 			}
 
 			uri = new UriInfo(getDefaultUriScheme(), host, port, username, password,
-					database).toString();
+					database, "authSource=admin").toString();
 		}
 
 		return createServiceInfo(getId(serviceData), uri);
