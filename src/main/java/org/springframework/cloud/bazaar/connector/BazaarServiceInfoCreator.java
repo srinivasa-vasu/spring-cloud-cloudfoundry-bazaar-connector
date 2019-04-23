@@ -64,8 +64,8 @@ public abstract class BazaarServiceInfoCreator<SI extends ServiceInfo>
 
 	@SuppressWarnings("unchecked")
 	protected String parseHost(List<Map<String, Object>> serviceInfo, String filter,
-			String hostMatch) {
-		String host = null;
+			String... hostMatch) {
+		String host = "";
 		Map<String, Object> hostInfo = (Map<String, Object>) ((Map<String, Object>) serviceInfo
 				.stream().filter(obj -> ((String) obj.get("name")).endsWith(filter))
 				.findFirst().orElse(Collections.emptyMap())
@@ -73,9 +73,11 @@ public abstract class BazaarServiceInfoCreator<SI extends ServiceInfo>
 						.getOrDefault("loadBalancer", Collections.emptyMap());
 
 		if (!hostInfo.isEmpty()) {
-			host = (String) ((List<Map<String, Object>>) hostInfo.get("ingress")).stream()
-					.findFirst().orElse(Collections.emptyMap())
-					.get(hostMatch);
+			Optional<Map<String, Object>> hostOpt = ((List<Map<String, Object>>) hostInfo
+					.get("ingress")).stream().findFirst();
+			if (hostOpt.isPresent()) {
+				host = getStringFromCredentials(hostOpt.get(), hostMatch);
+			}
 		}
 		return host;
 	}

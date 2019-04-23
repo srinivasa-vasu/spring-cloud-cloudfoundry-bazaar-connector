@@ -55,7 +55,7 @@ public class MongoServiceInfoCreator extends BazaarServiceInfoCreator<MongoServi
 
 			if (services != null && !services.isEmpty()) {
 				port = parsePort(services, "client", "port", "nodePort", "targetPort");
-				host = parseHost(services, "client", "ip");
+				host = parseHost(services, "client", "ip", "hostname");
 			}
 
 			uri = new UriInfo(getDefaultUriScheme(), host, port, username, password,
