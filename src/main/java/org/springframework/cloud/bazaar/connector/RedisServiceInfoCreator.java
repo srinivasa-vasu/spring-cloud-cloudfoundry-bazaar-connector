@@ -40,7 +40,7 @@ public class RedisServiceInfoCreator extends BazaarServiceInfoCreator<RedisServi
 
 			if (services != null && !services.isEmpty()) {
 				port = parsePort(services, "", "port", "nodePort", "targetPort");
-				host = parseHost(services, "", "ip");
+				host = parseHost(services, "", "ip", "hostname");
 			}
 
 		}
